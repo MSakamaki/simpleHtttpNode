@@ -6,6 +6,12 @@ var http = require("http"),
     port = process.argv[2] || 3000;
 
 http.createServer(function(request, response) {
+
+    var propaty = {
+        "filename": path.join(process.cwd(), url.parse(request.url).pathname),
+        "isHtml": /.*\.html$/
+    }
+
     var Response = {
         "200":function(file, filename){
             var extname = path.extname(filename);
@@ -14,7 +20,7 @@ http.createServer(function(request, response) {
                 "Pragma": "no-cache",
                 "Cache-Control" : "no-cache"
             }
-
+            if (filename.match(propaty.isHtml)) { header["Content-Type"]="text/html"; }
             response.writeHead(200, header);
             response.write(file, "binary");
             response.end();
@@ -33,17 +39,14 @@ http.createServer(function(request, response) {
         }
     }
 
-    var uri = url.parse(request.url).pathname,
-        filename = path.join(process.cwd(), uri);
-
-    fs.exists(filename, function(exists){
-        console.log(filename+" "+exists);
+    fs.exists(propaty.filename, function(exists){
+        console.log(propaty.filename+" "+exists);
         if (!exists) { Response["404"](); return ; }
-        if (fs.statSync(filename).isDirectory()) { filename += 'index.html'; }
+        if (fs.statSync(propaty.filename).isDirectory()) { propaty.filename += 'index.html'; }
 
-        fs.readFile(filename, "binary", function(err, file){
+        fs.readFile(propaty.filename, "binary", function(err, file){
             if (err) { Response["500"](err); return ; }
-            Response["200"](file, filename);
+            Response["200"](file, propaty.filename);
         });
     });
 
