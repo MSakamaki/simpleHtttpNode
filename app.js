@@ -10,7 +10,7 @@ var http = require('http'),
 var listenServer = function(request, response) {
 
     var propaty = {
-        'filename': path.join(process.cwd(), url.parse(request.url).pathname),
+        'filename': path.join(__dirname, url.parse(request.url).pathname),
         'isHtml': /.*\.html$/
     }
 
@@ -42,7 +42,7 @@ var listenServer = function(request, response) {
     }
 
     fs.exists(propaty.filename, function(exists){
-        console.log(propaty.filename+' '+exists);
+        console.log(propaty.filename+' '+exists, __dirname);
         if (!exists) { Response['404'](); return ; }
         if (fs.statSync(propaty.filename).isDirectory()) { propaty.filename += 'index.html'; }
 
