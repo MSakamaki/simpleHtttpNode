@@ -1,5 +1,6 @@
 /* server define */
-var http = require('http');
+var https = require('https');
+var constants = require('constants');
 var url  = require('url');
 var path = require('path');
 var  fs   = require('fs');
@@ -53,5 +54,10 @@ var listenServer = function(request, response) {
   });
 };
 
-http.createServer(listenServer).listen(parseInt(port, 10));
-console.log('Server running at http://localhost:' + port);
+https.createServer({
+  secureOptions: constants.SSL_OP_NO_SSLv3,
+  secureProtocol: 'SSLv23_method',
+  key: fs.readFileSync('ssl/server.key'),
+  cert: fs.readFileSync('ssl/server.crt'),
+}, listenServer).listen(parseInt(port, 10));
+console.log('Server running at https://localhost:' + port );

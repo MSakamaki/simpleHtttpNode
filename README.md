@@ -11,7 +11,7 @@ node app.js
 node app.js 3000
 
 // gzip compress option
-COMPRESS=gzip node app.js
+node appGzip.js
 
 ```
 go url http://localhost:3000
@@ -19,26 +19,15 @@ go url http://localhost:3000
 ### create ssh key (agenda)
 
 ```
-# https server mode
-HTTPS=true node app.js
-
-```
-
-```
 # my create certificate and key gen command
-mkdir ssh
-cd ssh
-
-openssl genrsa -des3 -out ssh/server.enc.key 1024
-openssl req -new -key ssh/server.enc.key -out ssh/server.csr
-openssl rsa -in ssh/server.enc.key -out ssh/server.key
-openssl x509 -req -days 365 -in ssh/server.csr -signkey ssh/server.key -out ssh/server.crt
-
-# or
-
-openssl genrsa -out ssh/key.pem
-openssl req -new -key ssh/key.pem -out ssh/csr.pem
-openssl x509 -req -days 9999 -in ssh/csr.pem -signkey ssh/key.pem -out ssh/cert.pem
-rm ssh/csr.pem
+mkdir ssl
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ssl/server.key -out ssl/server.crt
 
 ```
+
+```
+# https server mode
+node appHttps.js
+
+```
+go url https://localhost:3000
