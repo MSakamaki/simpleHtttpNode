@@ -2,7 +2,8 @@
 var http = require('http');
 var url  = require('url');
 var path = require('path');
-var  fs   = require('fs');
+var fs   = require('fs');
+var zlib = require('zlib');
 var port = process.argv[2] || 3000;
 var headerGenetator = require('./util/headerGenetator');
 var contetntType = require('./util/contentType');
@@ -17,8 +18,9 @@ var listenServer = function(request, response) {
     200:function(raw, filename) {
       var header = headerGenetator.createTemplate();
       header['Content-Type'] = contetntType.getHeaderContentText(path.extname(filename));
+      header['content-encoding'] = 'gzip';
       response.writeHead(200, header);
-      raw.pipe(response);
+      raw.pipe(zlib.createGzip()).pipe(response);
     },
 
     404:function() {
